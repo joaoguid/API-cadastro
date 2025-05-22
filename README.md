@@ -14,7 +14,7 @@ API REST desenvolvida com Java, Spring Boot e MySQL para cadastro de usuários.
 - Postman
 - Git & GitHub
 
-## 🔐 Funcionalidades
+## Funcionalidades
 
 - ✅ Cadastro de usuários
 - ✅ Listagem de usuários (GET)
