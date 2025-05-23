@@ -1,41 +1,28 @@
 package com.sistema_gerenciamento.api_cadastro.Security;
 
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.Claims;
-
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import javax.crypto.SecretKey;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "sua-chave-secreta-aqui";
-    private static final long EXPIRATION_TIME = 86400000; // 1 dia
+
+    private static final String SECRET = "minha-chave-secreta-supersegura-e-com-no-minimo-32-caracteres";
+    private static final long EXPIRATION = 86400000; // 1 dia
+
+    private final SecretKey secretKey = Keys.hmacShaKeyFor(SECRET.getBytes());
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-            Date expirationDate = claims.getExpiration();
-            return expirationDate.after(new Date());
-        } catch (Exception e) {
-            return false;
-        }
     }
 }
